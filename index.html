@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Inco Dodge</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #86d4f2;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    canvas {
+      background: #86d4f2;
+      display: block;
+      margin: 0 auto;
+    }
+    #score {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game" width="400" height="600"></canvas>
+  <div id="score">Score: 0</div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+
+    const cloud = {
+      x: 180,
+      y: 550,
+      width: 40,
+      height: 30,
+      speed: 5
+    };
+
+    let keys = {};
+    document.addEventListener('keydown', e => keys[e.key] = true);
+    document.addEventListener('keyup', e => keys[e.key] = false);
+
+    function drawCloud() {
+      ctx.beginPath();
+      ctx.arc(cloud.x + 10, cloud.y + 20, 10, 0, Math.PI * 2);
+      ctx.arc(cloud.x + 20, cloud.y + 10, 15, 0, Math.PI * 2);
+      ctx.arc(cloud.x + 30, cloud.y + 20, 10, 0, Math.PI * 2);
+      ctx.fillStyle = '#cce6ff';
+      ctx.fill();
+      ctx.strokeStyle = '#3399ff';
+      ctx.stroke();
+    }
+
+    class Obstacle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = 20;
+        this.speed = 2 + Math.random() * 2;
+      }
+      draw() {
+        ctx.fillStyle = '#007BFF';
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.fillStyle = '#fff';
+        ctx.font = "14px sans-serif";
+        ctx.fillText("///", this.x + 1, this.y + 15);
+      }
+      update() {
+        this.y += this.speed;
+      }
+    }
+
+    const obstacles = [];
+    let score = 0;
+
+    function spawnObstacle() {
+      const x = Math.random() * (canvas.width - 20);
+      obstacles.push(new Obstacle(x, -20));
+    }
+
+    function update() {
+      if (keys['ArrowLeft'] && cloud.x > 0) cloud.x -= cloud.speed;
+      if (keys['ArrowRight'] && cloud.x + cloud.width < canvas.width) cloud.x += cloud.speed;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawCloud();
+
+      obstacles.forEach(obs => {
+        obs.update();
+        obs.draw();
+
+        if (
+          obs.x < cloud.x + cloud.width &&
+          obs.x + obs.size > cloud.x &&
+          obs.y < cloud.y + cloud.height &&
+          obs.y + obs.size > cloud.y
+        ) {
+          alert("Game Over! Score: " + score);
+          document.location.reload();
+        }
+      });
+
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        if (obstacles[i].y > canvas.height) {
+          obstacles.splice(i, 1);
+          score++;
+          document.getElementById("score").textContent = "Score: " + score;
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    setInterval(spawnObstacle, 800);
+    update();
+  </script>
+</body>
+</html>
