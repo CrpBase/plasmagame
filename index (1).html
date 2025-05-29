@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Plasma Game</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+    #score {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      color: #ffffff;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="score">Score: 0</div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const playerImg = new Image();
+    const usdtImg = new Image();
+    const bgImg = new Image();
+    playerImg.src = "player.png";
+    usdtImg.src = "usdt.png";
+    bgImg.src = "world_background.png";
+
+    const cloud = {
+      x: canvas.width / 2 - 25,
+      y: canvas.height - 100,
+      width: 50,
+      height: 50,
+      speed: 8
+    };
+
+    let keys = {};
+    document.addEventListener('keydown', e => keys[e.key] = true);
+    document.addEventListener('keyup', e => keys[e.key] = false);
+
+    class Obstacle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = 40;
+        this.speed = 2 + Math.random() * 3;
+      }
+      draw() {
+        ctx.drawImage(usdtImg, this.x, this.y, this.size, this.size);
+      }
+      update() {
+        this.y += this.speed;
+      }
+    }
+
+    const obstacles = [];
+    let score = 0;
+
+    function spawnObstacle() {
+      const x = Math.random() * (canvas.width - 40);
+      obstacles.push(new Obstacle(x, -40));
+    }
+
+    function drawPlayer() {
+      ctx.drawImage(playerImg, cloud.x, cloud.y, cloud.width, cloud.height);
+    }
+
+    function update() {
+      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
+      if (keys['ArrowLeft'] && cloud.x > 0) cloud.x -= cloud.speed;
+      if (keys['ArrowRight'] && cloud.x + cloud.width < canvas.width) cloud.x += cloud.speed;
+
+      drawPlayer();
+
+      obstacles.forEach((obs, i) => {
+        obs.update();
+        obs.draw();
+
+        if (
+          obs.x < cloud.x + cloud.width &&
+          obs.x + obs.size > cloud.x &&
+          obs.y < cloud.y + cloud.height &&
+          obs.y + obs.size > cloud.y
+        ) {
+          obstacles.splice(i, 1);
+          score++;
+          document.getElementById("score").textContent = "Score: " + score;
+        }
+      });
+
+      requestAnimationFrame(update);
+    }
+
+    setInterval(spawnObstacle, 700);
+    update();
+  </script>
+</body>
+</html>
