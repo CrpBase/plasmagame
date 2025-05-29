@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Shop - PlasmaGame</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #081F28;
+      font-family: sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 20px;
+    }
+    .skin {
+      border: 3px solid transparent;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .selected {
+      border-color: #00f0ff;
+    }
+    img {
+      width: 100px;
+    }
+    button {
+      background-color: #009393;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #007777;
+    }
+  </style>
+</head>
+<body>
+  <h2>Choose Your Skin</h2>
+  <div style="display: flex; gap: 20px;">
+    <div id="default" class="skin">
+      <img src="player.png" />
+      <div align="center">Plasma</div>
+    </div>
+    <div id="pretrillions" class="skin">
+      <img src="skin_pretrillions.png" />
+      <div align="center">Pre-Trillions</div>
+    </div>
+  </div>
+  <div>
+    <button id="buy">Buy for 100</button>
+    <div id="status"></div>
+  </div>
+  <button onclick="window.location.href='index.html'">⬅ Back</button>
+
+  <script>
+    let selected = localStorage.getItem("selectedSkin") || "player";
+    const totalScore = parseInt(localStorage.getItem("totalScore") || "0");
+    document.getElementById(selected === "skin_pretrillions.png" ? "pretrillions" : "default").classList.add("selected");
+
+    document.getElementById("default").onclick = () => {
+      localStorage.setItem("selectedSkin", "player.png");
+      location.reload();
+    };
+    document.getElementById("pretrillions").onclick = () => {
+      localStorage.setItem("selectedSkin", "skin_pretrillions.png");
+      location.reload();
+    };
+
+    document.getElementById("buy").onclick = () => {
+      if (localStorage.getItem("skinOwned") === "yes") {
+        document.getElementById("status").innerText = "✅ Already owned.";
+        return;
+      }
+      if (totalScore >= 100) {
+        localStorage.setItem("totalScore", totalScore - 100);
+        localStorage.setItem("skinOwned", "yes");
+        localStorage.setItem("selectedSkin", "skin_pretrillions.png");
+        document.getElementById("status").innerText = "✅ Purchased!";
+      } else {
+        document.getElementById("status").innerText = "❌ Not enough points.";
+      }
+    };
+  </script>
+</body>
+</html>
