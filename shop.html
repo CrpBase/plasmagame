@@ -92,40 +92,32 @@
     document.querySelector(`[data-id="${selected}"]`)?.classList.add("selected");
 
     document.getElementById("buy").onclick = () => {
-      
-if (selected === "skin_pretrillions.png") {
-        if (!owned) {
-            if (totalScore >= 100) {
-                localStorage.setItem("totalScore", String(totalScore - 100));
-                localStorage.setItem("skinOwned", "yes");
-                localStorage.setItem("selectedSkin", selected);
-                document.getElementById("status").innerText = "✅ Purchased and applied!";
-            } else {
-                document.getElementById("status").innerText = "❌ Not enough points.";
-                return;
-            }
-        } else {
-            localStorage.setItem("selectedSkin", selected);
-            document.getElementById("status").innerText = "✅ Skin applied.";
-        }
-    } else {
-        localStorage.setItem("selectedSkin", selected);
-        document.getElementById("status").innerText = "✅ Skin applied.";
-    }
+  const currentScore = parseInt(localStorage.getItem("totalScore") || "0");
+  const alreadyOwned = localStorage.getItem("skinOwned") === "yes";
 
-        if (totalScore >= 100) {
-          localStorage.setItem("totalScore", String(totalScore - 100));
-          localStorage.setItem("skinOwned", "yes");
-          localStorage.setItem("selectedSkin", selected);
-          document.getElementById("status").innerText = "✅ Purchased and applied!";
-        } else {
-          document.getElementById("status").innerText = "❌ Not enough points.";
-        }
-      } else {
+  if (selected === "skin_pretrillions.png") {
+    if (!alreadyOwned) {
+      if (currentScore >= 100) {
+        const newScore = currentScore - 100;
+        localStorage.setItem("totalScore", String(newScore));
+        localStorage.setItem("skinOwned", "yes");
         localStorage.setItem("selectedSkin", selected);
-        document.getElementById("status").innerText = "✅ Skin applied.";
+        document.getElementById("status").innerText = "✅ Purchased and applied!";
+        document.getElementById("totalPoints").textContent = newScore;
+      } else {
+        document.getElementById("status").innerText = "❌ Not enough points.";
+        return;
       }
-    };
+    } else {
+      localStorage.setItem("selectedSkin", selected);
+      document.getElementById("status").innerText = "✅ Skin applied.";
+    }
+  } else {
+    localStorage.setItem("selectedSkin", selected);
+    document.getElementById("status").innerText = "✅ Skin applied.";
+  }
+};
+
   </script>
 </body>
 </html>
