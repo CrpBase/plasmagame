@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Shop - PlasmaGame</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #081F28;
+      font-family: sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 20px;
+    }
+    .skins {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+    }
+    .skin {
+      border: 3px solid transparent;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .skin img {
+      width: 100px;
+      height: 100px;
+    }
+    .selected {
+      border-color: #00f0ff;
+    }
+    button {
+      background-color: #009393;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #007777;
+    }
+    .price {
+      font-size: 14px;
+      color: #bbb;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Choose Your Skin</h2>
+  <div>Total Score: <span id="totalPoints"></span></div>
+  <div class="skins">
+    <div class="skin" data-id="player.png" data-price="0">
+      <img src="player.png" />
+      <div>Plasma</div>
+      <div class="price">Free</div>
+    </div>
+    <div class="skin" data-id="skin_pretrillions.png" data-price="100">
+      <img src="skin_pretrillions.png" />
+      <div>Pre-trillions</div>
+      <div class="price">100 pts</div>
+    </div>
+    <div class="skin" data-id="skin_bluepose.png" data-price="200">
+      <img src="skin_bluepose.png" />
+      <div>Scene</div>
+      <div class="price">200 pts</div>
+    </div>
+    <div class="skin" data-id="skin_dream.png" data-price="400">
+      <img src="skin_dream.png" />
+      <div>Nathan</div>
+      <div class="price">400 pts</div>
+    </div>
+    <div class="skin" data-id="skin_poodle.png" data-price="500">
+      <img src="skin_poodle.png" />
+      <div>Paul</div>
+      <div class="price">500 pts</div>
+    </div>
+
+  </div>
+      <div class="price">Free</div>
+    </div>
+    <div class="skin" data-id="skin_pretrillions.png" data-price="100">
+      <img src="skin_pretrillions.png" />
+      <div>Pre-trillions</div>
+      <div class="price">100 pts</div>
+    </div>
+    
+    <div class="skin" data-id="skin_poodle.png" data-price="500">
+      <img src="skin_poodle.png" />
+      <div>Paul</div>
+      <div class="price">300 pts</div>
+    </div>
+    <div class="skin" data-id="skin_bluepose.png" data-price="200">
+      <img src="skin_bluepose.png" />
+      <div>Scene</div>
+      <div class="price">400 pts</div>
+    </div>
+    <div class="skin" data-id="skin_dream.png" data-price="300">
+      <img src="skin_dream.png" />
+      <div>Nathan</div>
+      <div class="price">500 pts</div>
+    </div>
+  </div>
+
+  <button id="buy">Buy / Use selected</button>
+  <div id="status"></div>
+  <button onclick="window.location.href='index.html'">⬅ Back</button>
+  
+  <script>
+    let selected = localStorage.getItem("selectedSkin") || "player.png";
+    document.querySelector(`[data-id="${selected}"]`)?.classList.add("selected");
+
+    const totalPointsEl = document.getElementById("totalPoints");
+    const statusEl = document.getElementById("status");
+    const buyBtn = document.getElementById("buy");
+    const skins = document.querySelectorAll(".skin");
+
+    function getOwnedSkins() {
+      return JSON.parse(localStorage.getItem("ownedSkins") || "[]");
+    }
+
+    function setOwnedSkin(id) {
+      const owned = getOwnedSkins();
+      if (!owned.includes(id)) {
+        owned.push(id);
+        localStorage.setItem("ownedSkins", JSON.stringify(owned));
+      }
+    }
+
+    function updateTotalScoreDisplay() {
+      const total = parseInt(localStorage.getItem("totalScore") || "0");
+      totalPointsEl.textContent = total;
+    }
+
+    updateTotalScoreDisplay();
+
+    skins.forEach(skin => {
+      skin.addEventListener("click", () => {
+        skins.forEach(s => s.classList.remove("selected"));
+        skin.classList.add("selected");
+        selected = skin.dataset.id;
+      });
+    });
+
+    buyBtn.onclick = () => {
+      const price = parseInt(document.querySelector(`[data-id="${selected}"]`).dataset.price || "0");
+      const totalScore = parseInt(localStorage.getItem("totalScore") || "0");
+      const owned = getOwnedSkins();
+
+      if (price > 0 && !owned.includes(selected)) {
+        if (totalScore >= price) {
+          const newScore = totalScore - price;
+          localStorage.setItem("totalScore", String(newScore));
+          setOwnedSkin(selected);
+          localStorage.setItem("selectedSkin", selected);
+          statusEl.innerText = "✅ Purchased and applied!";
+          updateTotalScoreDisplay();
+        } else {
+          statusEl.innerText = "❌ Not enough points.";
+          return;
+        }
+      } else {
+        localStorage.setItem("selectedSkin", selected);
+        statusEl.innerText = "✅ Skin applied.";
+      }
+    };
+  </script>
+</body>
+</html>
