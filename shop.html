@@ -66,34 +66,39 @@
       <div>Plasma</div>
       <div class="price">Free</div>
     </div>
+
     <div class="skin" data-id="skin_pretrillions.png" data-price="100">
       <img src="skin_pretrillions.png" />
       <div>Pre-trillions</div>
       <div class="price">100 pts</div>
     </div>
+
     <div class="skin" data-id="skin_bluepose.png" data-price="200">
       <img src="skin_bluepose.png" />
       <div>Scene</div>
       <div class="price">200 pts</div>
     </div>
+
     <div class="skin" data-id="skin_dream.png" data-price="400">
       <img src="skin_dream.png" />
       <div>Nathan</div>
       <div class="price">400 pts</div>
     </div>
+
     <div class="skin" data-id="skin_poodle.png" data-price="500">
       <img src="skin_poodle.png" />
       <div>Paul</div>
       <div class="price">500 pts</div>
     </div>
+  </div>
 
   <button id="buy">Buy / Use selected</button>
   <div id="status"></div>
   <button onclick="window.location.href='index.html'">⬅ Back</button>
-  
+
   <script>
     let selected = localStorage.getItem("selectedSkin") || "player.png";
-    document.querySelector(`[data-id="${selected}"]`)?.classList.add("selected");
+    document.querySelector(`[data-id="{selected}"]`)?.classList.add("selected");
 
     const totalPointsEl = document.getElementById("totalPoints");
     const statusEl = document.getElementById("status");
@@ -128,7 +133,7 @@
     });
 
     buyBtn.onclick = () => {
-      const price = parseInt(document.querySelector(`[data-id="${selected}"]`).dataset.price || "0");
+      const price = parseInt(document.querySelector(`[data-id="{selected}"]`).dataset.price || "0");
       const totalScore = parseInt(localStorage.getItem("totalScore") || "0");
       const owned = getOwnedSkins();
 
