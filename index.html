@@ -198,6 +198,7 @@
       clearInterval(spawnInterval);
       clearInterval(enemyInterval);
       cancelAnimationFrame(animationId);
+      playerImg.src = localStorage.getItem("selectedSkin") || "player.png";
       score = 0;
       currentSpeed = 2;
       items.length = 0;
