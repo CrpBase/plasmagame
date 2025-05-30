@@ -172,7 +172,7 @@
         }
       } else {
         localStorage.setItem("selectedSkin", selected);
-        statusEl.innerText = "✅ Skin applied.";
+        if (statusEl) statusEl.innerText = "✅ Skin selected.";
       }
     };
   </script>
